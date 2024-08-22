@@ -9,8 +9,6 @@ const port = process.env.PORT || 2000;
 const app = express();
 app.use(bodyParser.json());
 
-
-
 console.log("porta: ", port)
 console.log("porta: ", process.env.DATABASE_URL)
 app.listen(port, () => {
