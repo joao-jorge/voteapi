@@ -8,7 +8,6 @@ require('dotenv').config({ path: '../.env' });
 const dbconnection = require('../src/config/databaseConfig'); 
 
 // Access environment variables
-const DBURL = process.env.DATABASE_URL;
 const port = process.env.PORT || 4000;
 
 // Middleware
