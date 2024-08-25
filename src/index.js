@@ -14,7 +14,7 @@ const port = process.env.PORT || 4000;
 app.use(bodyParser.json());
 
 // Routes 
-const userRoutes = require('./api/routes/User')
+const userRoutes = require('./api/routes/user')
 app.use('/', userRoutes)
 
 app.listen(port, () => {

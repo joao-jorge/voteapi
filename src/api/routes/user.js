@@ -1,9 +1,17 @@
 const express = require('express')
 const router = express.Router()
 
+const User = require('../models/user'); // 
+
+
 // List all users
-router.get('/', (req, res) => {
-  res.send('Nuno')
+router.get('/', async (req, res) => {
+    try {
+      const items = await User.find(); // Fetch all items from the collection
+      res.status(200).json(items); // Send the items as JSON response
+    } catch (err) {
+      res.status(500).json({ message: 'Server error', error: err });
+    }
 });
 
 // Show a user
@@ -16,8 +24,8 @@ router.post('/users', async (req, res) => {
     const { name, email, password } = req.body;
 
     // Create a new user instance
-    const user = new User({ name, email, password });
-
+    const user = new user({ name, email, password });
+    
     // Save the user to the database
     await user.save();
 

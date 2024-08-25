@@ -18,6 +18,6 @@ const userSchema = new mongoose.Schema({
 });
 
 // Create a model from the schema
-const User = mongoose.model('User', userSchema);
+const user = mongoose.model('user', userSchema);
 
-module.exports = User;
+module.exports = user;
