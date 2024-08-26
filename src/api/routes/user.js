@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const userModel = require('../controllers/user') 
 
+// User routes
 router.post('/', userModel.create);
 router.get('/', userModel.list);
 router.get('/:id', userModel.get);
