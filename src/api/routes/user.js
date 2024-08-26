@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
   } catch (error) { res.status(500).json({ message: error.message }); }
 });
 
-// Show a user
+// Get a user
 router.get('/:id', async(req, res) =>{
   try {
     const user = await User.findById(req.params.id);
@@ -29,9 +29,16 @@ router.get('/:id', async(req, res) =>{
   } catch (error) { res.status(500).json({message: error.message}); }
 });
 
-
-
-
+// Delete a user
+router.delete('/:id', async(req, res) =>{
+  try{
+    const deleteUser = await User.findByIdAndDelete(req.params.id);
+    if(!deleteUser) {
+      res.status(404).json({ message: "User not found" })
+    }
+    res.status(200).json({message: "User deleted successfuly", deleteUser: deleteUser});
+  } catch(error) {res.status(500).json({message: error.message})}
+})
 
 
 
