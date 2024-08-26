@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express();
+const cors = require('cors')
 require('dotenv').config({ path: '../.env' });
 
 // Database connection
@@ -8,8 +9,9 @@ const dbconnection = require('../src/config/databaseConfig');
 // Access environment variables
 const port = process.env.PORT || 4000;
 
-// Middleware
+// Middlewares
 app.use(express.json());
+app.use(cors())
 
 // Routes 
 const userRoutes = require('./api/routes/user')
