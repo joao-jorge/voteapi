@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 
 // Routes 
 const userRoutes = require('./api/routes/user')
-app.use('/', userRoutes)
+app.use('/api/user', userRoutes)
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
