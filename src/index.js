@@ -13,9 +13,13 @@ const port = process.env.PORT || 4000;
 app.use(express.json());
 app.use(cors())
 
-// Routes 
-const userRoutes = require('./api/routes/user')
-app.use('/api/user', userRoutes)
+// User Routes
+const UserRoutes = require('./api/routes/user')
+app.use('/api/user', UserRoutes)
+
+// Election Routes
+const ElectionsRoutes = require('./api/routes/election')
+app.use('/api/election', ElectionsRoutes)
         
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
