@@ -21,24 +21,21 @@ router.get('/', async (req, res) => {
   } catch (error) { res.status(500).json({ message: error.message }); }
 });
 
-
-
-/*
-
-
-
 // Show a user
 router.get('/:id', async(req, res) =>{
   try {
-    const {id} = req.params.id;
-    const user = await User.findById(id);
+    const user = await User.findById(req.params.id);
     res.status(200).json(user);
-  } catch (error) { res.status(500).json({message: req.params.id}); }
-})
+  } catch (error) { res.status(500).json({message: error.message}); }
+});
 
 
 
 
+
+
+
+/*
 // Update user's information
 
 
