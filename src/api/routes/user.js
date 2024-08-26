@@ -6,10 +6,10 @@ const User = require('../models/user'); //
 // List all users
 router.get('/', async (req, res) => {
   try {
-    const items = await User.find(); 
-    res.status(200).json(items); 
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err });
+    const users = await User.find(); 
+    res.status(200).json(users); 
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
