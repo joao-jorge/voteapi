@@ -14,10 +14,10 @@ router.get('/', async (req, res) => {
 // Show a user
 router.get('/user/:id', async(req, res) =>{
   try {
-    const {id} = req.params;
+    const {id} = req.params.id;
     const user = await User.findById(id);
     res.status(200).json(user);
-  } catch (error) { res.status(500).json({message: error.message}); }
+  } catch (error) { res.status(500).json({message: req.params.id}); }
 })
 
 
@@ -34,10 +34,7 @@ router.post('/user', async (req, res) => {
 
     // Respond with the created user
     res.status(201).json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
+  } catch (error) { res.status(500).json({ message: error.message }); }
 });
 
 // Update user's information
