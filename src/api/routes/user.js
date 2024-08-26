@@ -41,13 +41,17 @@ router.delete('/:id', async (req, res) => {
   } catch (error) { res.status(500).json({ message: error.message }); }
 });
 
-
-
-
-/*
 // Update user's information
-
-*/
-
+router.put('/:id', async(req, res) => {
+  try{
+    const { name, email, password } = req.body;
+    const user = await User.findById(req.params.id)
+    if(!user){
+      return res.status(404).json({message: "User not found"});
+    }
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, { name, email, password }, {new: true})
+    res.status(200).json({ message: 'User updated successfully', updatedUser: updatedUser })
+  } catch(error) {res.status(500).json({message: error.message})}
+})
   
 module.exports = router
