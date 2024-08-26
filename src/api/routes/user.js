@@ -5,15 +5,25 @@ const User = require('../models/user'); //
 
 // List all users
 router.get('/', async (req, res) => {
-    try {
-      const items = await User.find(); 
-      res.status(200).json(items); 
-    } catch (err) {
-      res.status(500).json({ message: 'Server error', error: err });
-    }
+  try {
+    const items = await User.find(); 
+    res.status(200).json(items); 
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err });
+  }
 });
 
 // Show a user
+router.get('/user/:id', async(req, res) =>{
+  try {
+    const {id} = req.params;
+    const user = await User.findById(id);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({message: ""})
+  }
+})
+
 
 // Create a user
 router.post('/user', async (req, res) => {
