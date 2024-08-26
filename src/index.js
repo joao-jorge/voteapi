@@ -1,7 +1,6 @@
 const express = require('express')
 const app = express();
 const bodyParser = require('body-parser');
-const Router = express.Router();
 require('dotenv').config({ path: '../.env' });
 
 // Database connection
