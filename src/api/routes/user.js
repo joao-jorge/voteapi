@@ -25,14 +25,8 @@ router.get('/user/:id', async(req, res) =>{
 router.post('/user', async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    
-    // Create a new user instance
     const user = new User({ name, email, password });
-    
-    // Save the user to the database
     await user.save();
-
-    // Respond with the created user
     res.status(201).json(user);
   } catch (error) { res.status(500).json({ message: error.message }); }
 });
