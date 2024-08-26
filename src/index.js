@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express();
-const bodyParser = require('body-parser');
 require('dotenv').config({ path: '../.env' });
 
 // Database connection
@@ -10,7 +9,7 @@ const dbconnection = require('../src/config/databaseConfig');
 const port = process.env.PORT || 4000;
 
 // Middleware
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Routes 
 const userRoutes = require('./api/routes/user')
