@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const candidateSchema = require('./user');
+const candidateSchema = require('../models/user');
 
 const electionSchema = new mongoose.Schema({
     title: { type: String, required: true },
