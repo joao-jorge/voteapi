@@ -72,6 +72,10 @@ const deleteElection = async (req, res) => {
   }
 };
 
+// criar funcao para adicionar um candidato em uma eleicao
+
+// criar uma funcao para modificar os dados de uma eleicao
+
 module.exports = {
   createElection,
   getElection,
