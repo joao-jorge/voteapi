@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
-const candidateSchema = require('../models/user');
+const candidate = require('../models/user')
 
 const electionSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
-    candidates: [candidateSchema], 
+    candidates: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: candidate // Reference to the User model
+      }], 
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true }
 });

@@ -1,50 +1,37 @@
-/*const Election = require('../models/election')
-
-
-const createElection = async (req, res) => {
-  res.send('createElection')
-}
-
-const getElection = async (req, res) => {
-    res.send('getElection')
-}
-
-const listAll = async (req, res) => {
-    res.send('listAll')
-}
-
-const deleteElection = async (req, res) => {
-    res.send('deleteElection')
-}
-
-module.exports = [
-    createElection,
-    getElection, 
-    deleteElection,
-    listAll
-];*/
-
 const Election = require('../models/election');
+const Candidate = require('../models/user')
+const { format } = require('date-fns');
+
 
 const createElection = async (req, res) => {
   try {
-    // Obter os dados da eleição do corpo da requisição
-    const { title, description, candidates, startDate, endDate } = req.body;
+    const { title, description, candidateIds, startDate, endDate } = req.body;
 
-    // Criar uma nova eleição
+    // Validate candidate IDs
+    const candidates = await Candidate.find({ _id: { $in: candidateIds } });
+    if (candidates.length !== candidateIds.length) {
+      return res.status(400).json({ error: 'One or more candidate IDs are invalid' });
+    }
+
+    // Get the current date and format it
+    const now = new Date();
+    const formattedStartDate = format(new Date(startDate), 'yyyy-MM-dd');
+    const formattedEndDate = format(new Date(endDate), 'yyyy-MM-dd');
+
+    // Create a new Election instance
     const election = new Election({
       title,
       description,
-      candidates,
-      startDate,
-      endDate
+      candidates, // Store candidate IDs directly; Mongoose will handle the population
+      startDate: formattedStartDate,
+      endDate: formattedEndDate
     });
 
-    // Salvar a eleição no banco de dados
-    await election.save();
+    // Save the Election to the database
+    const savedElection = await election.save();
 
-    // Retornar a eleição criada
-    res.status(201).json(election);
+    // Return the created Election
+    res.status(201).json(savedElection);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
