@@ -14,11 +14,11 @@ app.use(express.json());
 app.use(cors())
 
 // User Routes
-const UserRoutes = require('./api/routes/user')
+const UserRoutes = require('./api/routes/userRoute')
 app.use('/api/user', UserRoutes)
 
 // Election Routes
-const ElectionsRoutes = require('./api/routes/election')
+const ElectionsRoutes = require('./api/routes/electionRoute')
 app.use('/api/election', ElectionsRoutes)
 
 // Candidate Routes

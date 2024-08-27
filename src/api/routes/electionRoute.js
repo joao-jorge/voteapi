@@ -1,6 +1,6 @@
 const express = require('express')
 const Route = express.Router()
-const Election = require('../controllers/election')
+const Election = require('../controllers/electionController')
 
 Route.post('/', Election.createElection);
 Route.get('/:id', Election.getElection);

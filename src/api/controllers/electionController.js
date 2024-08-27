@@ -1,5 +1,5 @@
-const Election = require('../models/election');
-const Candidate = require('../models/user')
+const Election = require('../models/electionModel');
+const Candidate = require('../models/userModel')
 const { format } = require('date-fns');
 
 
