@@ -92,6 +92,29 @@ const addCandidateToElection = async (req, res) => {
   }
 }
 
+const removeCandidateFromElection = async (req, res) =>{
+  try {
+    const election = await Election.findById(req.params.electionId)
+    if(!election)
+      return res.status(400).json({message: "Election not found!"});
+
+    const { candidateId } = req.params;
+    if(!election.candidates.includes(candidateId))
+      return res.status(400).json({message: "Candidate is not in the election", candidateId})
+    
+    // Remove the candidate from the election
+    await Election.updateOne(
+      { _id: election },
+      { $pull: { candidates: candidateId } }
+    );
+
+    
+    res.status(200).json({message: "Candidate removed from election successfuly", candidateId})
+  } catch (error) {
+    res.status(500).json({message: error.message})
+  }
+}
+
 // criar uma funcao para modificar os dados de uma eleicao
 
 module.exports = {
@@ -99,5 +122,6 @@ module.exports = {
   getElection,
   listAll,
   deleteElection,
-  addCandidateToElection
+  addCandidateToElection,
+  removeCandidateFromElection
 };
