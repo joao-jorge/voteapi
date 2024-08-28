@@ -1,9 +1,16 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 
 const create = async (req, res) => {
     try {
       const { name, email, password } = req.body;
-      const user = new User({ name, email, password });
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      if(await findUserByEmail(email)){
+        return res.status(400).json({message: "User already exists" });
+      } 
+
+      const user = new User({ name, email, password: hashedPassword });
       await user.save();
       res.status(201).json({ message: "User created successfuly", user: user });
     } catch (error) { res.status(500).json({ message: error.message }); }
@@ -44,6 +51,11 @@ const update = async(req, res) => {
       const updatedUser = await User.findByIdAndUpdate(req.params.id, { name, email, password }, {new: true})
       res.status(200).json({ message: 'User updated successfully', updatedUser: updatedUser })
     } catch(error) {res.status(500).json({message: error.message})}
+}
+
+const findUserByEmail = (email) => {
+  const findUser = User.findOne({email: email});
+  return findUser;
 }
 
 module.exports = {
