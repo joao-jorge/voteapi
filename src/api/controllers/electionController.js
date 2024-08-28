@@ -73,6 +73,24 @@ const deleteElection = async (req, res) => {
 };
 
 // criar funcao para adicionar um candidato em uma eleicao
+const addCandidateToElection = async (req, res) => {
+  try {
+    const election = await Election.findById(req.params.electionId)
+    if(!election)
+      return res.status(400).json({message: "Election not found!"});
+
+    const { candidateId } = req.params;
+    if(election.candidates.includes(candidateId))
+      return res.status(400).json({message: "Candidate is already in the election", candidateId})
+    
+    // Add candidate to the election
+    election.candidates.push(candidateId)
+    await election.save()
+    res.status(200).json({message: "Candidate added successfuly in the election"});
+  } catch (error) {
+    res.status(200).json({message: error.message})
+  }
+}
 
 // criar uma funcao para modificar os dados de uma eleicao
 
@@ -80,5 +98,6 @@ module.exports = {
   createElection,
   getElection,
   listAll,
-  deleteElection
+  deleteElection,
+  addCandidateToElection
 };
