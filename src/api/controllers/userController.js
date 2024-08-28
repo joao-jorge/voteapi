@@ -3,14 +3,19 @@ const User = require('../models/userModel');
 
 const create = async (req, res) => {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password, role } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
-      
+
       if(await findUserByEmail(email)){
         return res.status(400).json({message: "User already exists" });
       } 
 
-      const user = new User({ name, email, password: hashedPassword });
+      // Verify is the data are inserted correctly
+      const notValid = await validateInputs(name, email, password)
+      if(notValid)
+        return res.status(500).json({ message: notValid })
+
+      const user = new User({ name, email, password: hashedPassword, role });
       await user.save();
       res.status(201).json({ message: "User created successfuly", user: user });
     } catch (error) { res.status(500).json({ message: error.message }); }
@@ -56,6 +61,15 @@ const update = async(req, res) => {
 const findUserByEmail = (email) => {
   const findUser = User.findOne({email: email});
   return findUser;
+}
+
+const validateInputs = async (name, email, password) =>{
+  if (!name || typeof name !== 'string' || name.trim() === '') 
+    return 'Name is required and must be a string';
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) 
+    return 'Invalid email format';
+  if (!password || password.length < 6)
+    return 'Password must be at least 6 characters long';
 }
 
 module.exports = {
