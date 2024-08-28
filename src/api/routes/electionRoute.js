@@ -6,5 +6,6 @@ Route.post('/', Election.createElection);
 Route.get('/:id', Election.getElection);
 Route.get('/', Election.listAll);
 Route.delete('/:id', Election.deleteElection)
+Route.put('/:electionId/:candidateId', Election.addCandidateToElection)
 
 module.exports = Route
