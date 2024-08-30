@@ -24,6 +24,10 @@ app.use('/api/election', ElectionsRoutes)
 // Candidate Routes
 const CandidateRoutes = require('./api/routes/candidateRoute')
 app.use('/api/candidate', CandidateRoutes)
+
+// Vote Routes
+const VoteRoutes = require('./api/routes/voteRoute')
+app.use('/api/vote', VoteRoutes)
         
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
