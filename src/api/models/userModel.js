@@ -7,10 +7,10 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ["admin", "user"], default: "user" },
-  election: {
+  election: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: election // Reference to election model
-  },
+  }]
 },{ timestamps: true });
 
 const User = mongoose.model('user', userSchema);
