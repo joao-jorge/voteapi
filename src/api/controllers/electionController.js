@@ -2,7 +2,6 @@ const Election = require('../models/electionModel');
 const Candidate = require('../models/userModel')
 const { format } = require('date-fns');
 
-
 const createElection = async (req, res) => {
   try {
     const { title, description, candidateIds, startDate, endDate } = req.body;
@@ -14,7 +13,6 @@ const createElection = async (req, res) => {
     }
 
     // Get the current date and format it
-    const now = new Date();
     const formattedStartDate = format(new Date(startDate), 'yyyy-MM-dd');
     const formattedEndDate = format(new Date(endDate), 'yyyy-MM-dd');
 
