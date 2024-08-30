@@ -7,7 +7,7 @@ const electionSchema = new mongoose.Schema({
     candidates: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: candidate // Reference to the User model
-      }], 
+    }], 
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true }
 });
