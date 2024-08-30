@@ -1,19 +1,16 @@
 const mongoose = require('mongoose');
+const Election = require('../models/electionModel')
+const Candidate = require('../models/candidateModel')
 
 const voteSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
   election: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Election',
+    ref: Election,
     required: true
   },
   candidate: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Candidate',
+    ref: Candidate,
     required: true
   },
   votedAt: { type: Date, default: Date.now }
