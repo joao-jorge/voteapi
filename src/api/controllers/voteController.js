@@ -14,8 +14,14 @@ const castVote = async (req, res) => {
         }
 
         // Verify if the election is ongoing
-        if(){
+        //if(){
 
+        //}
+
+        // Verify if the candidate exists
+        const foundCandidate = await Candidate.findById(idCandidate);
+        if (!foundCandidate) {
+          return res.status(404).json({ message: 'Could not vote! Candidate does not exists.' });
         }
 
         // Verify if the user exists
@@ -29,7 +35,13 @@ const castVote = async (req, res) => {
             return res.status(400).json({message: "Could not vote! User has already voted."})
         }
         
+        const vote = new Vote({
+            idElection,
+            idCandidate
+        });
 
+        const savedVote = await vote.save();
+        res.status(200).json({message: "Uer has successfully voted!", vote: savedVote});
 
     }catch(error){res.status(500).json({ message: error.message })}
 }
