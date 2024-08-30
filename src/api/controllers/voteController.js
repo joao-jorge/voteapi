@@ -31,21 +31,23 @@ const castVote = async (req, res) => {
         }
 
         // Verify if the user has already voted
-        if(foundUser.election.includes(idUser)){
+        if(foundUser.election.includes(idElection)){
             return res.status(400).json({message: "Could not vote! User has already voted."})
         }
         
+    
         const vote = new Vote({
-            idElection,
-            idCandidate
+            election: idElection,
+            candidate: idCandidate
         });
 
-        const savedVote = await vote.save();
-        res.status(200).json({message: "Uer has successfully voted!", vote: savedVote});
+        console.log(idElection)
+        //const savedVote = await vote.save();
+        res.status(200).json({message: "Uer has successfully voted!"});
 
     }catch(error){res.status(500).json({ message: error.message })}
 }
 
-module.exports = [
+module.exports = {
     castVote
-]
+};
