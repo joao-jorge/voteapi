@@ -8,5 +8,6 @@ Route.get('/', Election.listAll);
 Route.delete('/:id', Election.deleteElection)
 Route.put('/:electionId/:candidateId', Election.addCandidateToElection)
 Route.delete('/:electionId/:candidateId', Election.removeCandidateFromElection)
+Route.put('/:id', Election.updateElection)
 
 module.exports = Route
