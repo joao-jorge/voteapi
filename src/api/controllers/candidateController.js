@@ -3,6 +3,15 @@ const Candidate = require('../models/candidateModel');
 const create = async (req, res) => {
     try {
       const { name, party } = req.body;
+
+      if(!name || !party){
+        return res.status(400).json({message: "Fill all the fields!"})
+      }
+
+      if(!isValidInput(name) || !isValidInput(party)){
+        return res.status(400).json({message: "Name and Party cannot contain invalid inputs!"})
+      }
+
       const candidate = new Candidate({ name, party });
       await candidate.save();
       res.status(201).json({ message: "Candidate created successfuly", candidate: candidate });
@@ -37,6 +46,14 @@ const remove = async (req, res) => {
 const update = async(req, res) => {
     try{
       const { name, party } = req.body;
+      
+      if(!name || !party){
+        return res.status(400).json({message: "Fill all the fields!"})
+      }
+
+      if(!isValidInput(name) || !isValidInput(party)){
+        return res.status(400).json({message: "Name and Party cannot contain invalid inputs!"})
+      }
       const candidate = await Candidate.findById(req.params.id)
       if(!candidate){
         return res.status(404).json({message: "Candidate not found"});
@@ -45,6 +62,13 @@ const update = async(req, res) => {
       res.status(200).json({ message: 'Candidate updated successfully', updatedCandidate: updatedCandidate })
     } catch(error) {res.status(500).json({message: error.message})}
 }
+
+const isValidInput = (input) => {
+  // Allow letters, spaces, hyphens, and accented characters
+  const regex = /^[\p{L}\s\-]+$/u;
+  return regex.test(input);
+};
+
 
 module.exports = {
     create,
