@@ -1,4 +1,5 @@
 const Candidate = require('../models/candidateModel');
+const mongoose = require('mongoose')
 
 const create = async (req, res) => {
     try {
@@ -21,19 +22,37 @@ const create = async (req, res) => {
 const list = async (req, res) => {
     try {
         const candidates = await Candidate.find(); 
+
+        if(!candidates){
+          return res.status(400).json({message: "There's not candidate!"})
+        }
+
         res.status(200).json(candidates); 
     } catch (error) { res.status(500).json({ message: error.message }); }
 }
 
 const get = async(req, res) =>{
     try {
+      // Validate if the id is a valid ObjectId
+      if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({ message: "Invalid candidate ID format!" });
+      }
+
       const candidate = await Candidate.findById(req.params.id);
+      if(!candidate){
+        return res.status(400).json({message: "Candidate not found!"})
+      }
       res.status(200).json(candidate);
     } catch (error) { res.status(500).json({message: error.message}); }
 }
 
 const remove = async (req, res) => {
     try {
+      // Validate if the id is a valid ObjectId
+      if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({ message: "Invalid candidate ID format!" });
+      }
+
       const candidate = await Candidate.findById(req.params.id);
       if (!candidate) {
         return res.status(404).json({ message: 'candidate not found' });
@@ -45,6 +64,11 @@ const remove = async (req, res) => {
 
 const update = async(req, res) => {
     try{
+      // Validate if the id is a valid ObjectId
+      if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({ message: "Invalid candidate ID format!" });
+      }
+      
       const { name, party } = req.body;
       
       if(!name || !party){
@@ -68,7 +92,6 @@ const isValidInput = (input) => {
   const regex = /^[\p{L}\s\-]+$/u;
   return regex.test(input);
 };
-
 
 module.exports = {
     create,
