@@ -53,7 +53,7 @@ const getElection = async (req, res) => {
 
 const listAll = async (req, res) => {
   try {
-    const foundElections = await Election.find();
+    const foundElections = await Election.find().populate('candidates.name');
 
     if(!foundElections){
       return res.status(404).json({ message: "There's no election!" });
