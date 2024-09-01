@@ -153,13 +153,6 @@ const updateElection = async (req, res) => {
   }
 }
 
-
-const isValidInput = (input) => {
-  // Allow letters, spaces, hyphens, and accented characters
-  const regex = /^[\p{L}\s\-]+$/u;
-  return regex.test(input);
-};
-
 module.exports = {
   createElection,
   getElection,
