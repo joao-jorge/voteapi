@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { validateUserInput, findUserByEmail } = require('../validations/validation')
 const User = require('../models/userModel');
 const mongoose = require('mongoose')
 
@@ -10,7 +11,7 @@ const create = async (req, res) => {
         return res.status(400).json({message: "Fill all the fields!"})
 
       // Verify is the data are inserted correctly
-      const notValid = await validateInputs(name, email, password)
+      const notValid = await validateUserInput(name, email, password)
       if(notValid)
         return res.status(500).json({ message: notValid })
 
@@ -70,8 +71,11 @@ const update = async(req, res) => {
       if(!name || !email || !password)
         return res.status(400).json({message: "Fill all the fields!"});
 
+      if(await findUserByEmail(email))
+        return res.status(400).json({message: "Cannot update! this email is being used." });
+
       // Verify is the data are inserted correctly
-      const notValid = await validateInputs(name, email, password)
+      const notValid = await validateUserInput(name, email, password)
       if(notValid)
         return res.status(500).json({ message: notValid })
 
@@ -82,20 +86,6 @@ const update = async(req, res) => {
       const updatedUser = await User.findByIdAndUpdate(req.params.id, { name, email, password }, {new: true})
       res.status(200).json({ message: 'User updated successfully', updatedUser: updatedUser })
     } catch(error) {res.status(500).json({message: error.message})}
-}
-
-const findUserByEmail = (email) => {
-  const findUser = User.findOne({email: email});
-  return findUser;
-}
-
-const validateInputs = async (name, email, password) =>{
-  if (!name || typeof name !== 'string' || name.trim() === '') 
-    return 'Name is required and must be a string';
-  if (!email || !/^\S+@\S+\.\S+$/.test(email)) 
-    return 'Invalid email format';
-  if (!password || password.length < 6)
-    return 'Password must be at least 6 characters long';
 }
 
 module.exports = {
