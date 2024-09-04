@@ -1,5 +1,6 @@
 const Candidate = require('../models/candidateModel');
 const mongoose = require('mongoose')
+const { validCandidateInput } = require('../validations/validation')
 
 const create = async (req, res) => {
     try {
@@ -9,7 +10,7 @@ const create = async (req, res) => {
         return res.status(400).json({message: "Fill all the fields!"})
       }
 
-      if(!isValidInput(name) || !isValidInput(party)){
+      if(!validCandidateInput(name) || !validCandidateInput(party)){
         return res.status(400).json({message: "Name and Party cannot contain invalid inputs!"})
       }
 
@@ -86,12 +87,6 @@ const update = async(req, res) => {
       res.status(200).json({ message: 'Candidate updated successfully', updatedCandidate: updatedCandidate })
     } catch(error) {res.status(500).json({message: error.message})}
 }
-
-const isValidInput = (input) => {
-  // Allow letters, spaces, hyphens, and accented characters
-  const regex = /^[\p{L}\s\-]+$/u;
-  return regex.test(input);
-};
 
 module.exports = {
     create,
