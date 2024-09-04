@@ -13,7 +13,15 @@ const findUserByEmail = (email) => {
     const findUser = User.findOne({email: email});
     return findUser;
 }
+
+const validCandidateInput = (input) => {
+    // Allow letters, spaces, hyphens, and accented characters
+    const regex = /^[\p{L}\s\-]+$/u;
+    return regex.test(input);
+};
+
 module.exports = {
     validateUserInput,
-    findUserByEmail
+    findUserByEmail,
+    validCandidateInput
 }
