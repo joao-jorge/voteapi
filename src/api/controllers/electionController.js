@@ -1,5 +1,4 @@
 const Election = require('../models/electionModel');
-const Candidate = require('../models/userModel')
 const mongoose = require('mongoose')
 const { format } = require('date-fns');
 
