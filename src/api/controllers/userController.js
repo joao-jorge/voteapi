@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { validateUserInput, findUserByEmail } = require('../validations/validation')
 const User = require('../models/userModel');
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
 
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
