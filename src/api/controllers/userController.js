@@ -3,6 +3,8 @@ const { validateUserInput, findUserByEmail } = require('../validations/validatio
 const User = require('../models/userModel');
 const mongoose = require('mongoose')
 
+const JWT_SECRET = 'your_generated_secret'
+
 const create = async (req, res) => {
     try {
       const { name, email, password, role } = req.body;
@@ -88,10 +90,30 @@ const update = async(req, res) => {
     } catch(error) {res.status(500).json({message: error.message})}
 }
 
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body
+    if(!email || !password) 
+      return res.status(400).json({ message: "Fill all the fields!" });
+    
+    const foundUser = await findUserByEmail(email);
+    if(!foundUser)
+      return res.status(400).json({message: "User not found!" });
+
+    if(!await bcrypt.compare(password, foundUser.password))
+      return res.status(401).json({ message: "Invalid credentials for this user!" });
+
+    const token = jwt.sign({ userId: foundUser._id }, JWT_SECRET, { expiresIn: '1h' })
+    res.json({ token })
+
+  } catch(error) { res.status(500).json({ message: error.message }) }
+}
+
 module.exports = {
     create,
     list,
     get,
     remove,
-    update
+    update,
+    login
 }
