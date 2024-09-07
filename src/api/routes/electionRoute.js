@@ -1,13 +1,15 @@
+const Election = require('../controllers/electionController')
+const auth = require('../middlewares/authMiddleware')
 const express = require('express')
 const Route = express.Router()
-const Election = require('../controllers/electionController')
 
-Route.post('/', Election.createElection);
-Route.get('/:id', Election.getElection);
-Route.get('/', Election.listAll);
-Route.delete('/:id', Election.deleteElection)
-Route.put('/:electionId/:candidateId', Election.addCandidateToElection)
-Route.delete('/:electionId/:candidateId', Election.removeCandidateFromElection)
-Route.put('/:id', Election.updateElection)
+Route.use(auth.authentication)
+Route.post('/', auth.authorization(['admin']), Election.createElection);
+Route.get('/:id', auth.authorization(['admin', 'user']), Election.getElection);
+Route.get('/', auth.authorization(['admin', 'user']), Election.listAll);
+Route.delete('/:id', auth.authorization(['admin']), Election.deleteElection)
+Route.put('/:electionId/:candidateId', auth.authorization(['admin']), Election.addCandidateToElection)
+Route.delete('/:electionId/:candidateId', auth.authorization(['admin']), Election.removeCandidateFromElection)
+Route.put('/:id', auth.authorization(['admin']), Election.updateElection)
 
 module.exports = Route
