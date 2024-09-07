@@ -22,12 +22,12 @@ const authentication = async (req, res, next) => {
 
     // Attach full user data to the request object
     req.user = user;
+    
     next();
   } catch (err) {
     return res.status(403).json({ message: 'Invalid token' });
   }
 };
-
 
 const authorization = (roles) => (req, res, next) => {
   if (!roles.includes(req.user.role)) {
