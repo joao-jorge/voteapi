@@ -1,7 +1,10 @@
-const express = require('express')
+
 const Vote = require('../controllers/voteController')
+const auth = require('../middlewares/authMiddleware')
+const express = require('express')
 const Route = express.Router()
 
-Route.post('/:idElection/:idUser/:idCandidate', Vote.castVote)
+Route.use(auth.authentication);
+Route.post('/:idElection/:idUser/:idCandidate', auth.authorization(['user', 'admin']), Vote.castVote)
 
 module.exports = Route
