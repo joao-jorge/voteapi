@@ -1,13 +1,15 @@
 const express = require('express')
 const app = express();
 const cors = require('cors')
+const fs = require('fs');
+const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 require('dotenv').config({ path: '../.env' });
 
 // Database connection
 const dbconnection = require('../src/config/databaseConfig'); 
 
 // Access environment variables
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || config.ONLINE_PORT;
 
 // Middlewares
 app.use(express.json());
