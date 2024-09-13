@@ -171,11 +171,13 @@ const showResults = async (req, res) => {
       // Fetch candidate details
       const candidates = await Candidate.find({ '_id': { $in: election.candidates } });
 
+       
+
       // Map candidates to include party names
       const results = candidates.map(candidate => ({
           name: candidate.name,
           party: candidate.party,
-          votes: Math.floor(Math.random() * 1000) // Simulated votes
+          votes: election.votes.includes(req.params.electionId) // Falta calcular o numero de votos de cada candidato
       }));
 
       // Sort candidates by vote count in descending order
