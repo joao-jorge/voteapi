@@ -1,5 +1,6 @@
 const Election = require('../models/electionModel');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Candidate = require('../models/candidateModel')
 const { format } = require('date-fns');
 
 const createElection = async (req, res) => {
@@ -152,6 +153,45 @@ const updateElection = async (req, res) => {
   }
 }
 
+// Criar uma funcao para mostrar o resultado das eleicoes
+const showElectionsResults = async (req, res) => {
+  try {
+
+  } catch(error){ error.message }
+}
+
+const showResults = async (req, res) => {
+  try {
+      const election = await Election.findById(req.params.electionId).populate('candidates');
+      
+      if (!election) {
+          return res.status(404).send('Election not found');
+      }
+
+      // Fetch candidate details
+      const candidates = await Candidate.find({ '_id': { $in: election.candidates } });
+
+      // Map candidates to include party names
+      const results = candidates.map(candidate => ({
+          name: candidate.name,
+          party: candidate.party,
+          votes: Math.floor(Math.random() * 1000) // Simulated votes
+      }));
+
+      res.json({
+          title: election.title,
+          description: election.description,
+          startDate: election.startDate,
+          endDate: election.endDate,
+          results
+      });
+
+  } catch (err) {
+      console.error(err);
+      res.status(500).send(err.message);
+  }
+};
+
 module.exports = {
   createElection,
   getElection,
@@ -159,5 +199,6 @@ module.exports = {
   deleteElection,
   addCandidateToElection,
   removeCandidateFromElection,
-  updateElection
+  updateElection,
+  showResults
 };

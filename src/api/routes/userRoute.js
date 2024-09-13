@@ -8,6 +8,7 @@ router.post('/', userModel.create);
 router.post('/login', userModel.login);
 
 
+
 router.use(auth.authentication) // all routes under need auth
 // Protected routes
 router.get('/', auth.authorization(['admin']), userModel.list);

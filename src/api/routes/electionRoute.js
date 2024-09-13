@@ -3,6 +3,8 @@ const auth = require('../middlewares/authMiddleware')
 const express = require('express')
 const Route = express.Router()
 
+Route.get('/election-result/:electionId', Election.showResults);
+
 Route.use(auth.authentication)
 Route.post('/', auth.authorization(['admin']), Election.createElection);
 Route.get('/:id', auth.authorization(['admin', 'user']), Election.getElection);
