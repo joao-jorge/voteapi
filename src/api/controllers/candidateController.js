@@ -6,13 +6,15 @@ const create = async (req, res) => {
     try {
       const { name, party } = req.body;
 
-      if(!name || !party){
+      if(!name || !party)
         return res.status(400).json({message: "Fill all the fields!"})
-      }
 
-      if(!validCandidateInput(name) || !validCandidateInput(party)){
+      const candidateFound = Candidate.findOne({party: party})
+      if(candidateFound)
+        return res.status(400).json({ message: "Candidate of this party exists already!" })
+      
+      if(!validCandidateInput(name) || !validCandidateInput(party))
         return res.status(400).json({message: "Name and Party cannot contain invalid inputs!"})
-      }
 
       const candidate = new Candidate({ name, party });
       await candidate.save();
