@@ -66,17 +66,14 @@ const remove = async (req, res) => {
 const update = async(req, res) => {
     try{
       // Validate if the id is a valid ObjectId
-      if (!mongoose.isValidObjectId(req.params.id)) {
+      if (!mongoose.isValidObjectId(req.params.id)) 
         return res.status(400).json({ message: "Invalid candidate ID format!" });
-      }
       
       const { name, party } = req.body;
-      
-      if(!name || !party){
+      if(!name || !party)
         return res.status(400).json({message: "Fill all the fields!"})
-      }
 
-      if(!isValidInput(name) || !isValidInput(party)){
+      if(!validCandidateInput(name) || !validCandidateInput(party)){
         return res.status(400).json({message: "Name and Party cannot contain invalid inputs!"})
       }
       const candidate = await Candidate.findById(req.params.id)

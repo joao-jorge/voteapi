@@ -1,0 +1,1 @@
+Adicionar validacao para os candidatos(verificar quando existe ja um candidato de um partido )
