@@ -163,7 +163,7 @@ const showElectionsResults = async (req, res) => {
 const showResults = async (req, res) => {
   try {
       const election = await Election.findById(req.params.electionId).populate('candidates');
-      
+      console.log(election)
       if (!election) {
           return res.status(404).send('Election not found');
       }
@@ -177,6 +177,9 @@ const showResults = async (req, res) => {
           party: candidate.party,
           votes: Math.floor(Math.random() * 1000) // Simulated votes
       }));
+
+      // Sort candidates by vote count in descending order
+      results.sort((a, b) => b.votes - a.votes);
 
       res.json({
           title: election.title,
