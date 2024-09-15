@@ -1,5 +1,6 @@
-const Election = require('../models/electionModel');
 const mongoose = require('mongoose');
+const Election = require('../models/electionModel');
+const Vote = require('../models/voteModel')
 const Candidate = require('../models/candidateModel')
 const { format } = require('date-fns');
 
@@ -153,36 +154,45 @@ const updateElection = async (req, res) => {
   }
 }
 
-// Criar uma funcao para mostrar o resultado das eleicoes
-const showElectionsResults = async (req, res) => {
-  try {
-
-  } catch(error){ error.message }
-}
-
 const showResults = async (req, res) => {
   try {
-      const election = await Election.findById(req.params.electionId).populate('candidates');
-      console.log(election)
+      const { electionId } = req.params;
+
+      // Find the election by ID and populate the candidates
+      const election = await Election.findById(electionId).populate('candidates');
       if (!election) {
-          return res.status(404).send('Election not found');
+          return res.status(404).json({ message: 'Election not found' });
       }
 
+      // Extract candidate IDs from the populated election
+      const candidateIds = election.candidates.map(candidate => candidate._id);
+
+      // Count votes for each candidate in the election
+      const voteCounts = await Vote.aggregate([
+          { $match: { election: new mongoose.Types.ObjectId(electionId) } },
+          { $group: { _id: '$candidate', count: { $sum: 1 } } }
+      ]);
+
+      // Create a map of vote counts for quick lookup
+      const voteCountMap = voteCounts.reduce((acc, { _id, count }) => {
+          acc[_id.toString()] = count;
+          return acc;
+      }, {});
+
       // Fetch candidate details
-      const candidates = await Candidate.find({ '_id': { $in: election.candidates } });
+      const candidates = await Candidate.find({ '_id': { $in: candidateIds } });
 
-       
-
-      // Map candidates to include party names
+      // Map candidates to include party names and votes
       const results = candidates.map(candidate => ({
           name: candidate.name,
           party: candidate.party,
-          votes: election.votes.includes(req.params.electionId) // Falta calcular o numero de votos de cada candidato
+          votes: voteCountMap[candidate._id.toString()] || 0 // Default to 0 if no votes
       }));
 
       // Sort candidates by vote count in descending order
       results.sort((a, b) => b.votes - a.votes);
 
+      // Send the response with sorted results
       res.json({
           title: election.title,
           description: election.description,
@@ -193,9 +203,10 @@ const showResults = async (req, res) => {
 
   } catch (err) {
       console.error(err);
-      res.status(500).send(err.message);
+      res.status(500).json({ message: err.message });
   }
 };
+
 
 module.exports = {
   createElection,
