@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { validateUserInput, findUserByEmail } = require('../validations/validation')
+const { validateUserInput, findUserByEmail, validateUserInputWithoutEmail } = require('../validations/validation')
 const User = require('../models/userModel');
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
@@ -71,15 +71,12 @@ const update = async(req, res) => {
       if (!mongoose.isValidObjectId(req.params.id)) 
         return res.status(400).json({ message: "Invalid ID format!" });
 
-      const { name, email, password } = req.body;
-      if(!name || !email || !password)
+      const { name, password } = req.body;
+      if(!name || !password)
         return res.status(400).json({message: "Fill all the fields!"});
 
-      if(await findUserByEmail(email))
-        return res.status(400).json({message: "Cannot update! this email is being used." });
-
       // Verify is the data are inserted correctly
-      const notValid = await validateUserInput(name, email, password)
+      const notValid = await validateUserInputWithoutEmail(name, password)
       if(notValid)
         return res.status(500).json({ message: notValid })
 
@@ -87,7 +84,7 @@ const update = async(req, res) => {
       if (!foundUser) 
         return res.status(404).json({ message: 'User not found' });
 
-      const updatedUser = await User.findByIdAndUpdate(req.params.id, { name, email, password }, {new: true})
+      const updatedUser = await User.findByIdAndUpdate(req.params.id, { name, password }, {new: true})
       res.status(200).json({ message: 'User updated successfully', updatedUser: updatedUser })
     } catch(error) {res.status(500).json({message: error.message})}
 }

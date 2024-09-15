@@ -9,6 +9,13 @@ const validateUserInput = async (name, email, password) =>{
       return 'Password must be at least 6 characters long';
 }
 
+const validateUserInputWithoutEmail = async (name, password) =>{
+  if (!name || typeof name !== 'string' || name.trim() === '') 
+    return 'Name is required and must be a string';
+  if (!password || password.length < 6)
+    return 'Password must be at least 6 characters long';
+}
+
 const findUserByEmail = (email) => {
     const findUser = User.findOne({email: email});
     return findUser;
@@ -23,5 +30,6 @@ const validCandidateInput = (input) => {
 module.exports = {
     validateUserInput,
     findUserByEmail,
-    validCandidateInput
+    validCandidateInput,
+    validateUserInputWithoutEmail
 }
