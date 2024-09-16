@@ -207,6 +207,76 @@ const showResults = async (req, res) => {
   }
 };
 
+const getElectionStatistics = async (req, res) => {
+  try {
+    const { electionId } = req.params;
+
+    // Validate if the id is a valid ObjectId
+    if (!mongoose.isValidObjectId(electionId)) {
+      return res.status(400).json({ message: "Invalid ID format!" });
+    }
+
+    // Find the election by ID and populate the candidates
+    const election = await Election.findById(electionId).populate('candidates');
+    if (!election) {
+      return res.status(404).json({ message: 'Election not found' });
+    }
+
+    // Total number of candidates
+    const totalCandidates = election.candidates.length;
+
+    // Total number of votes
+    const totalVotes = await Vote.countDocuments({ election: electionId });
+
+    // Votes per candidate
+    const votesPerCandidate = await Vote.aggregate([
+      { $match: { election: new mongoose.Types.ObjectId(electionId) } },
+      { $group: { _id: '$candidate', count: { $sum: 1 } } }
+    ]);
+
+    // Create a map of vote counts for quick lookup
+    const voteCountMap = votesPerCandidate.reduce((acc, { _id, count }) => {
+      acc[_id.toString()] = count;
+      return acc;
+    }, {});
+
+    // Fetch candidate details
+    const candidates = await Candidate.find({ '_id': { $in: election.candidates.map(c => c._id) } });
+
+    // Map candidates to include votes
+    const candidateResults = candidates.map(candidate => ({
+      name: candidate.name,
+      party: candidate.party,
+      votes: voteCountMap[candidate._id.toString()] || 0
+    }));
+
+    // Calculate election duration
+    const startDate = new Date(election.startDate);
+    const endDate = new Date(election.endDate);
+    const durationDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
+
+    // Response with statistics
+    res.json({
+      election: {
+        title: election.title,
+        description: election.description,
+        startDate: election.startDate,
+        endDate: election.endDate,
+        durationDays
+      },
+      totalCandidates,
+      totalVotes,
+      votesPerCandidate: candidateResults,
+      voterTurnout: "N/A" // Voter turnout can be calculated if you have voter data
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 module.exports = {
   createElection,
