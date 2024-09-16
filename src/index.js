@@ -9,7 +9,7 @@ require('dotenv').config({ path: '../.env' });
 const dbconnection = require('../src/config/databaseConfig'); 
 
 // Access environment variables
-const port = config.LOCAL_PORT || config.ONLINE_PORT;
+const port = config.ONLINE_PORT || config.LOCAL_PORT;
 
 // Middlewares
 app.use(express.json());
