@@ -1,16 +1,15 @@
-const express = require('express')
-const app = express();
+const express = require('express');
 const cors = require('cors')
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 require('dotenv').config({ path: '../.env' });
+const app = express();
 
 // Database connection
 const dbconnection = require('../src/config/databaseConfig'); 
 
-// Access environment variables
-const port = config.ONLINE_PORT || config.LOCAL_PORT;
-
+//const port = config.ONLINE_PORT
+const port = config.LOCAL_PORT;
 // Middlewares
 app.use(express.json());
 app.use(cors())
@@ -30,7 +29,9 @@ app.use('/api/candidate', CandidateRoutes)
 // Vote Routes
 const VoteRoutes = require('./api/routes/voteRoute')
 app.use('/api/vote', VoteRoutes)
-        
+       
+
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
