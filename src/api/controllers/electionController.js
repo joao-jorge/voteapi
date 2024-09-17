@@ -243,17 +243,21 @@ const getElectionStatistics = async (req, res) => {
     // Fetch candidate details
     const candidates = await Candidate.find({ '_id': { $in: election.candidates.map(c => c._id) } });
 
+
     // Map candidates to include votes
     const candidateResults = candidates.map(candidate => ({
       name: candidate.name,
       party: candidate.party,
-      votes: voteCountMap[candidate._id.toString()] || 0
+      votes: voteCountMap[candidate._id.toString()] || 0,
+      percentage: Math.floor((voteCountMap[candidate._id.toString()] * 100) / totalVotes) || 0
     }));
 
     // Calculate election duration
     const startDate = new Date(election.startDate);
     const endDate = new Date(election.endDate);
     const durationDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
+
+    candidateResults.sort((a, b) => b.votes - a.votes);
 
     // Response with statistics
     res.json({
