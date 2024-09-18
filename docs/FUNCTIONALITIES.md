@@ -1,310 +1,240 @@
+# FUNCTIONALITIES.md
 
-1. User Management
-1.1. User Registration
-1.2. User Authentication
-1.3. User Roles and Permissions
-1.4. User Profile Management
+## Overview
 
-2. Election Management
-2.1. Create and Manage Elections
-2.2. List Elections
-2.3. View Election Details
-2.4. Schedule and End Elections
+This document outlines the core functionalities of the Voting API, including managing candidates and casting votes in an election. It provides detailed information about the available API endpoints, input validation, and error handling.
 
-3. Voting Process
-3.1. Vote Casting
-3.2. Vote Verification
-3.3. View Voting Status
+---
 
-4. Results and Reporting
-4.1. View Election Results
-4.2. Results Aggregation
-4.3. Reporting and Analytics
+## Voting Functionalities
 
-5. Security
-5.1. Authentication and Authorization
-5.2. Data Encryption
-5.3. Input Validation
-5.4. Rate Limiting
-5.5. Audit Logging
+### 1. Cast a Vote
 
-6. Administration and Maintenance
+**Route**: `POST /votes/cast/:idElection/:idUser/:idCandidate`  
+**Description**: This functionality allows a user to cast a vote for a candidate in a specified election.
 
-6.1. Admin Dashboard
+- **Request Parameters**:
+  - `idElection`: The unique identifier of the election.
+  - `idUser`: The unique identifier of the user who is voting.
+  - `idCandidate`: The unique identifier of the candidate being voted for.
 
-    Create a dashboard for admins to manage elections, view user activities, and monitor the system.
+- **Request Body**:  
+  No request body is required since the parameters are passed in the URL.
 
-6.2. User Management for Admins
+- **Functional Flow**:
+  1. **Input Validation**: Ensures that `idElection`, `idUser`, and `idCandidate` are provided.
+  2. **Election Existence Check**: Verifies that the election exists in the system.
+  3. **Election Date Validation**: Ensures the election is currently ongoing by comparing the current date with the election’s start and end dates.
+  4. **Candidate Existence Check**: Verifies that the candidate exists in the election.
+  5. **User Existence Check**: Ensures the user exists in the system.
+  6. **Duplicate Voting Prevention**: Checks whether the user has already voted in the election. If they have, the vote is not allowed.
+  7. **Vote Creation**: If all checks pass, a new vote is created for the specified candidate and election.
+  8. **User Election Tracking**: The election is added to the user's election history, preventing duplicate votes in future requests.
 
-    Allow admins to manage users, including activating/deactivating accounts or resetting passwords.
+- **Response**:
+  - Success:  
+    ```json
+    {
+      "message": "User has successfully voted!"
+    }
+    ```
+  - Error:  
+    - `400 Bad Request`: Invalid input parameters or the user has already voted.
+    - `404 Not Found`: Election, candidate, or user does not exist.
+    - `500 Internal Server Error`: General server error.
 
-6.3. System Health Monitoring
+---
 
-    Monitor the health and performance of the system to ensure it is functioning correctly.
+## Candidate Management Functionalities
 
-7. API Documentation and Testing
+### 1. Create a Candidate
 
-7.1. API Documentation
+**Route**: `POST /candidates`  
+**Description**: This functionality allows creating a new candidate for an election.
 
-    Document your API endpoints using tools like Swagger or Postman to help developers understand and use your API.
+- **Request Body**:
+  ```json
+  {
+    "name": "Candidate Name",
+    "party": "Party Name"
+  }
 
-7.2. Testing
+- **Functional Flow**:
 
-    Write unit and integration tests to ensure that your API works correctly and securely.
+  1. **Input Validation**: Ensures that both the name and party fields are provided and contain valid inputs.
+  2. **Duplicate Candidate Check**: Verifies that no other candidate with the same party exists.
+  2. **Candidate Creation**: If all validations pass, the candidate is created and stored in the database.
 
-Example API Endpoints
+- **Response**:
+  - Success:  
+    ```json
+    {
+    "message": "Candidate created successfully",
+    "candidate": { "name": "Candidate Name", "party": "Party Name" }
+    }
+    ```
+  - Error:
 
-Here’s a high-level overview of possible endpoints you might include:
+    - `400 Bad Request`: Missing fields or invalid inputs.
+    - `400 Bad Request`: A candidate with the same party already exists.
+    - `500 Internal Server Error`: General server error.
 
-User Management
 
-    POST /api/auth/register: Register a new user.
-    POST /api/auth/login: Log in a user and return a token.
-    GET /api/users/profile: Get user profile information (protected).
-    PUT /api/users/profile: Update user profile information (protected).
+### 2. List All Candidates
 
-Election Management
+**Route**: `GET /candidates`
+**Description**: This functionality allows fetching all candidates registered in the system.
 
-    POST /api/elections: Create a new election (admin only).
-    GET /api/elections: List all elections.
-    GET /api/elections/:id: Get details of a specific election.
-    PUT /api/elections/:id: Update election details (admin only).
-    DELETE /api/elections/:id: Delete an election (admin only).
+- **Functional Flow**:
+        Fetches all candidates from the database and returns them in the response.
 
-Voting Process
+    Response:
+        Success:
 
-    POST /api/votes: Cast a vote (protected).
-    GET /api/votes/status: Check if a user has voted (protected).
+        json
 
-Results and Reporting
+        [
+          {
+            "_id": "candidateId1",
+            "name": "Candidate Name",
+            "party": "Party Name"
+          },
+          ...
+        ]
 
-    GET /api/elections/:id/results: View results of a specific election (admin only).
+        Error:
+            400 Bad Request: If no candidates are found.
+            500 Internal Server Error: General server error.
 
-Security
+3. Get a Candidate by ID
 
-    Use HTTPS for secure data transmission.
-    Implement CORS (Cross-Origin Resource Sharing) policies if needed.
+Route: GET /candidates/:id
+Description: This functionality allows fetching a specific candidate by their unique ID.
 
+    Request Parameters:
+        id: The unique identifier of the candidate.
 
+    Functional Flow:
+        ID Validation: Ensures the provided id is a valid MongoDB ObjectId.
+        Candidate Fetching: Fetches the candidate based on the provided ID.
 
-***************************************************************************
-ADVANCEDS CONCEPTS
+    Response:
+        Success:
 
-For a more advanced online voting API, you might want to include additional functionalities to enhance usability, security, and overall system performance. Here are some advanced features and improvements you could consider:
-1. Advanced Security Features
+        json
 
-1.1. Multi-Factor Authentication (MFA)
+        {
+          "_id": "candidateId",
+          "name": "Candidate Name",
+          "party": "Party Name"
+        }
 
-    Implement MFA for additional security during user login or sensitive actions, such as voting or account management.
+        Error:
+            400 Bad Request: Invalid candidate ID format.
+            404 Not Found: Candidate not found.
+            500 Internal Server Error: General server error.
 
-1.2. Role-Based Access Control (RBAC)
+4. Delete a Candidate by ID
 
-    Fine-tune permissions for different roles (e.g., different levels of admin access, voter roles).
+Route: DELETE /candidates/:id
+Description: This functionality allows deleting a candidate from the system.
 
-1.3. Encryption at Rest
+    Request Parameters:
+        id: The unique identifier of the candidate.
 
-    Encrypt sensitive data stored in the database to enhance data security.
+    Functional Flow:
+        ID Validation: Ensures the provided id is a valid MongoDB ObjectId.
+        Candidate Fetching: Fetches the candidate based on the provided ID.
+        Candidate Deletion: Deletes the candidate if found.
 
-1.4. Audit Trails
+    Response:
+        Success:
 
-    Maintain detailed audit trails for all actions performed within the system, including user activities and administrative actions.
+        json
 
-1.5. IP Whitelisting and Geolocation
+        {
+          "message": "Candidate deleted successfully",
+          "deletedCandidate": {
+            "_id": "candidateId",
+            "name": "Candidate Name",
+            "party": "Party Name"
+          }
+        }
 
-    Implement IP whitelisting for admin access and geolocation restrictions for voting.
+        Error:
+            400 Bad Request: Invalid candidate ID format.
+            404 Not Found: Candidate not found.
+            500 Internal Server Error: General server error.
 
-2. User Experience Enhancements
+5. Update a Candidate by ID
 
-2.1. User Notifications
+Route: PUT /candidates/:id
+Description: This functionality allows updating the information of a specific candidate.
 
-    Send notifications (e.g., email, SMS) for important events such as election start/end times, voting deadlines, and results.
+    Request Parameters:
+        id: The unique identifier of the candidate.
 
-2.2. User-friendly Voting Interface
+    Request Body:
 
-    Provide a user-friendly interface for casting votes, possibly with support for multiple languages.
+    json
 
-2.3. Ballot Customization
+{
+  "name": "Updated Candidate Name",
+  "party": "Updated Party Name"
+}
 
-    Allow for custom ballots, where users can choose from a list of options or write in candidates.
+Functional Flow:
 
-2.4. Accessibility Features
+    ID Validation: Ensures the provided id is a valid MongoDB ObjectId.
+    Input Validation: Ensures the name and party fields are provided and contain valid inputs.
+    Candidate Fetching: Fetches the candidate based on the provided ID.
+    Candidate Update: Updates the candidate's details if found.
 
-    Ensure that your voting interface is accessible to users with disabilities (e.g., screen readers, keyboard navigation).
+Response:
 
-3. Advanced Voting Features
+    Success:
 
-3.1. Ranked Voting
+    json
 
-    Support advanced voting methods such as ranked-choice voting or preferential voting.
+        {
+          "message": "Candidate updated successfully",
+          "updatedCandidate": {
+            "_id": "candidateId",
+            "name": "Updated Candidate Name",
+            "party": "Updated Party Name"
+          }
+        }
 
-3.2. Proxy Voting
+        Error:
+            400 Bad Request: Invalid candidate ID format or missing fields.
+            404 Not Found: Candidate not found.
+            500 Internal Server Error: General server error.
 
-    Implement proxy voting where voters can delegate their vote to someone else.
+Error Handling
 
-3.3. Vote Verification and Receipt
+    400 Bad Request: Returned if invalid input parameters are provided or an invalid candidate ID format is used.
+    404 Not Found: Returned if the requested candidate is not found.
+    500 Internal Server Error: Returned if an unexpected error occurs during the process.
 
-    Provide a way for voters to verify that their vote was received and counted correctly, possibly with a receipt or confirmation number.
 
-3.4. Voter Authentication
 
-    Use advanced techniques to authenticate voters, such as biometric verification or integration with government-issued IDs.
 
-4. Performance and Scalability
 
-4.1. High Availability and Load Balancing
 
-    Set up load balancers and ensure high availability for your API to handle high traffic during elections.
 
-4.2. Caching
 
-    Implement caching for frequently accessed data, such as election details or results, to improve performance.
 
-4.3. Distributed Systems
 
-    Use distributed databases or services to manage large-scale voting data and ensure reliability.
 
-4.4. API Rate Limiting
 
-    Implement rate limiting to prevent abuse and ensure fair usage of the API.
 
-5. Data Integrity and Validation
 
-5.1. Blockchain Integration
 
-    Consider integrating blockchain technology to record votes securely and immutably, providing a transparent and tamper-proof voting record.
 
-5.2. Real-Time Analytics
 
-    Provide real-time analytics and dashboards for monitoring ongoing elections, including vote counts and participation rates.
 
-5.3. Data Validation and Verification
 
-    Implement rigorous validation to prevent fraudulent votes and ensure the integrity of election data.
 
-6. Integration and Interoperability
 
-6.1. Integration with External Systems
 
-    Integrate with external systems such as voter registration databases or government election systems for verification and data synchronization.
 
-6.2. API Integration
-
-    Provide API endpoints for external systems to interact with your voting system, such as for reporting or data retrieval.
-
-6.3. Webhooks
-
-    Implement webhooks to notify external systems or services about specific events, such as when an election ends or when votes are cast.
-
-7. Administrative Tools
-
-7.1. Election Management Dashboard
-
-    Develop a comprehensive dashboard for administrators to manage elections, view results, and handle user issues.
-
-7.2. Bulk Operations
-
-    Support bulk operations such as importing/exporting election data or user accounts.
-
-7.3. Audit and Compliance Tools
-
-    Provide tools for compliance with legal and regulatory requirements, including generating reports and ensuring adherence to voting laws.
-
-
-****************************************************************************************
-or advanced specifics in the context of online voting, there are several sophisticated features and enhancements that can significantly improve the system’s functionality, security, and user experience. Here are some detailed advanced functionalities specific to the voting process:
-1. Advanced Voting Methods
-
-1.1. Ranked-Choice Voting (RCV)
-
-    Allow voters to rank candidates in order of preference. Votes are redistributed based on preferences until a candidate achieves a majority.
-    Implementation:
-        Update the data model to store ranked preferences.
-        Implement algorithms for counting and redistributing votes.
-
-1.2. Proportional Representation
-
-    Use methods like Single Transferable Vote (STV) to allocate seats proportionally based on the number of votes each candidate or party receives.
-
-1.3. Weighted Voting
-
-    Assign different weights to votes based on certain criteria, such as stakeholder status or geographic location.
-
-1.4. Approval Voting
-
-    Allow voters to approve or disapprove of candidates without ranking them. The candidate with the highest number of approvals wins.
-
-2. Vote Privacy and Anonymity
-
-2.1. Homomorphic Encryption
-
-    Implement homomorphic encryption to allow votes to be encrypted and aggregated without being decrypted, ensuring vote privacy.
-
-2.2. Zero-Knowledge Proofs
-
-    Use zero-knowledge proofs to allow verification of vote validity without revealing the vote itself.
-
-2.3. Privacy-Preserving Voting Protocols
-
-    Employ advanced cryptographic protocols such as the Mix-Net or the Helios voting system to preserve voter anonymity while ensuring vote integrity.
-
-3. Fraud Prevention and Verification
-
-3.1. Voter Identity Verification
-
-    Use biometric verification, government ID integration, or digital signatures to verify voter identities before allowing them to vote.
-
-3.2. Vote Tampering Detection
-
-    Implement mechanisms to detect and prevent tampering or manipulation of votes, such as checksum validation or anomaly detection algorithms.
-
-3.3. Double Voting Prevention
-
-    Employ techniques such as blockchain-based proof of voting or real-time cross-referencing with a centralized voter database to prevent double voting.
-
-4. Enhanced User Experience
-
-4.1. Dynamic Ballots
-
-    Allow dynamic ballot adjustments based on user input or election changes. For example, dynamically generate ballot options based on previous user selections.
-
-4.2. Accessible Voting
-
-    Provide accessibility features such as screen reader support, high-contrast modes, and alternative input methods to ensure all voters can participate.
-
-4.3. Multilingual Support
-
-    Offer voting interfaces and instructions in multiple languages to accommodate diverse user bases.
-
-5. Real-Time and Post-Election Features
-
-5.1. Real-Time Vote Tracking
-
-    Provide real-time tracking of votes and election status for administrators, with live updates on vote counts and results.
-
-5.2. Post-Election Audits
-
-    Implement post-election auditing mechanisms, including manual verification, to ensure election integrity and transparency.
-
-5.3. Result Certification
-
-    Develop processes for certifying and validating election results, including generating official certificates and documentation.
-
-6. Integration and Interoperability
-
-6.1. Integration with External Voting Systems
-
-    Provide APIs or mechanisms to integrate with external voting systems or databases for data synchronization and verification.
-
-6.2. Cross-Election Reporting
-
-    Enable cross-election reporting to analyze voting patterns, trends, and anomalies across multiple elections or jurisdictions.
-
-7. Scalability and Performance
-
-7.1. Distributed Voting Infrastructure
-
-    Use distributed systems or cloud services to handle large-scale voting operations and ensure high availability and scalability.
-
-7.2. Load Balancing and Caching
-
-    Implement load balancing and caching strategies to manage high traffic and ensure responsive voting experiences.
