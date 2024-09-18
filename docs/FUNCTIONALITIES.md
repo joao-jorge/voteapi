@@ -10,7 +10,7 @@ This document outlines the core functionalities of the Voting API, including man
 
 ### 1. Cast a Vote
 
-**Route**: `POST /votes/cast/:idElection/:idUser/:idCandidate`  
+**Route**: `POST /api/vote/:idElection/:idUser/:idCandidate`  
 **Description**: This functionality allows a user to cast a vote for a candidate in a specified election.
 
 - **Request Parameters**:
@@ -116,38 +116,37 @@ This document outlines the core functionalities of the Voting API, including man
         `ID Validation`: Ensures the provided id is a valid MongoDB ObjectId.
         `Candidate Fetching`: Fetches the candidate based on the provided ID.
 
-   - **Response**:
-  - Success:  
-    ```json
+- **Response**:
+    - Success:  
+      ```json
 
         {
           "_id": "candidateId",
           "name": "Candidate Name",
           "party": "Party Name"
         }
-    ```
-  - Error:
-    - `400 Bad Request`: Invalid candidate ID format.
-    - `404 Not Found`: Candidate not found.
-    - `500 Internal Server Error`: General server error.
+      ```
+    - Error:
+      - `400 Bad Request`: Invalid candidate ID format.
+      - `404 Not Found`: Candidate not found.
+      - `500 Internal Server Error`: General server error.
 
-4. Delete a Candidate by ID
+### 4. Delete a Candidate by ID
 
-Route: DELETE /candidates/:id
-Description: This functionality allows deleting a candidate from the system.
+**Route**: `DELETE /candidates/:id`
+**Description**: This functionality allows deleting a candidate from the system.
 
-    Request Parameters:
-        id: The unique identifier of the candidate.
+- **Request Parameters**:
+    - `id`: The unique identifier of the candidate.
 
-    Functional Flow:
-        ID Validation: Ensures the provided id is a valid MongoDB ObjectId.
-        Candidate Fetching: Fetches the candidate based on the provided ID.
-        Candidate Deletion: Deletes the candidate if found.
+- **Functional Flow**:
+    - `ID Validation`: Ensures the provided id is a valid MongoDB ObjectId.
+    - `Candidate Fetching`: Fetches the candidate based on the provided ID.
+    - `Candidate Deletion`: Deletes the candidate if found.
 
-    Response:
-        Success:
-
-        json
+- **Response**:
+    - Success:  
+      ```json
 
         {
           "message": "Candidate deleted successfully",
@@ -157,41 +156,37 @@ Description: This functionality allows deleting a candidate from the system.
             "party": "Party Name"
           }
         }
+      ```
+    - Error:
+      - `400 Bad Request`: Invalid candidate ID format.
+      - `404 Not Found`: Candidate not found.
+      - `500 Internal Server Error`: General server error.
 
-        Error:
-            400 Bad Request: Invalid candidate ID format.
-            404 Not Found: Candidate not found.
-            500 Internal Server Error: General server error.
 
-5. Update a Candidate by ID
+### 5. Update a Candidate by ID
 
-Route: PUT /candidates/:id
-Description: This functionality allows updating the information of a specific candidate.
+**Route**: `PUT /candidates/:id`  
+**Description**: This functionality allows updating the information of a specific candidate.
 
-    Request Parameters:
-        id: The unique identifier of the candidate.
+- **Request Parameters**:
+  - `id`: The unique identifier of the candidate.
 
-    Request Body:
+- **Request Body**:
+  ```json
+  {
+    "name": "Updated Candidate Name",
+    "party": "Updated Party Name"
+  }
 
-    json
+- **Functional Flow**:
+    - `ID Validation`: Ensures the provided id is a valid MongoDB ObjectId.
+    - `Input Validation`: Ensures the name and party fields are provided and contain valid inputs.
+    - `Candidate Fetching`: Fetches the candidate based on the provided ID.
+    - `Candidate Update`: Updates the candidate's details if found.
 
-{
-  "name": "Updated Candidate Name",
-  "party": "Updated Party Name"
-}
-
-Functional Flow:
-
-    ID Validation: Ensures the provided id is a valid MongoDB ObjectId.
-    Input Validation: Ensures the name and party fields are provided and contain valid inputs.
-    Candidate Fetching: Fetches the candidate based on the provided ID.
-    Candidate Update: Updates the candidate's details if found.
-
-Response:
-
-    Success:
-
-    json
+- **Response**:
+    - Success:  
+      ```json
 
         {
           "message": "Candidate updated successfully",
@@ -201,18 +196,11 @@ Response:
             "party": "Updated Party Name"
           }
         }
-
-        Error:
-            400 Bad Request: Invalid candidate ID format or missing fields.
-            404 Not Found: Candidate not found.
-            500 Internal Server Error: General server error.
-
-Error Handling
-
-    400 Bad Request: Returned if invalid input parameters are provided or an invalid candidate ID format is used.
-    404 Not Found: Returned if the requested candidate is not found.
-    500 Internal Server Error: Returned if an unexpected error occurs during the process.
-
+      ```
+    - Error:
+      - `400 Bad Request`: Invalid candidate ID format.
+      - `404 Not Found`: Candidate not found.
+      - `500 Internal Server Error`: General server error.
 
 
 
