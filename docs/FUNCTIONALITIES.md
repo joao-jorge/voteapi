@@ -88,51 +88,48 @@ This document outlines the core functionalities of the Voting API, including man
 - **Functional Flow**:
         Fetches all candidates from the database and returns them in the response.
 
-    Response:
-        Success:
-
-        json
+- **Response**:
+  - Success:  
+    ```json
 
         [
           {
             "_id": "candidateId1",
             "name": "Candidate Name",
             "party": "Party Name"
-          },
-          ...
+          }
         ]
+    ```
+  - Error:
+    - `400 Bad Request`: If no candidates are found.
+    - `500 Internal Server Error`: General server error.
 
-        Error:
-            400 Bad Request: If no candidates are found.
-            500 Internal Server Error: General server error.
+### 3. Get a Candidate by ID
 
-3. Get a Candidate by ID
+**Route**: `GET /candidates/:id`
+**Description**: This functionality allows fetching a specific candidate by their unique ID.
 
-Route: GET /candidates/:id
-Description: This functionality allows fetching a specific candidate by their unique ID.
+- **Request Parameters**:
+    - `id`: The unique identifier of the candidate.
 
-    Request Parameters:
-        id: The unique identifier of the candidate.
+- **Functional Flow**:
+        `ID Validation`: Ensures the provided id is a valid MongoDB ObjectId.
+        `Candidate Fetching`: Fetches the candidate based on the provided ID.
 
-    Functional Flow:
-        ID Validation: Ensures the provided id is a valid MongoDB ObjectId.
-        Candidate Fetching: Fetches the candidate based on the provided ID.
-
-    Response:
-        Success:
-
-        json
+   - **Response**:
+  - Success:  
+    ```json
 
         {
           "_id": "candidateId",
           "name": "Candidate Name",
           "party": "Party Name"
         }
-
-        Error:
-            400 Bad Request: Invalid candidate ID format.
-            404 Not Found: Candidate not found.
-            500 Internal Server Error: General server error.
+    ```
+  - Error:
+    - `400 Bad Request`: Invalid candidate ID format.
+    - `404 Not Found`: Candidate not found.
+    - `500 Internal Server Error`: General server error.
 
 4. Delete a Candidate by ID
 
