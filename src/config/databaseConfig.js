@@ -3,8 +3,8 @@ const fs = require('fs');
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 require('dotenv').config({ path: '.env' });
 
-//const URI = config.ONLINE_URL;
-const URI = config.LOCAL_URI;
+const URI = config.ONLINE_URL;
+//const URI = config.LOCAL_URI;
 
 mongoose.connect(URI, {});
 
